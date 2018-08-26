@@ -32,7 +32,7 @@ assert min_by_key("b", [{"a": -1}, {"b": -1}]) == {"b": -1}
 */
 
 
-export function minByKey(key: string, records: Map<string, number>[]): Map<string, number> | undefined {
+export function minByKey(key: string, records: Map<string, number>[]): Map<string, number> {
   let answer: Map<string, number> | undefined;
   let min: number;
   records.forEach( ( record: Map<string, number>) => {
@@ -48,8 +48,8 @@ export function minByKey(key: string, records: Map<string, number>[]): Map<strin
       }
     }    
   })
+
   if (!answer) {
-    console.log('Set value!');
     answer = new Map<string, number>();
   }
   return answer;
@@ -59,3 +59,69 @@ export function minByKey(key: string, records: Map<string, number>[]): Map<strin
 
 // let answer = minByKey('a', records);
 // console.log('Answer is ', answer);
+
+/*
+ 
+Step 2: first_by_key
+Our next step in database development is to add a new function. We'll call this function first_by_key. It has much in common with min_by_key. 
+first_by_key takes three arguments:
+ 
+a string key
+a string sort direction (which must be either "asc" or "desc")
+an array of records, just as in min_by_key.
+If the sort direction is "asc", then we should return the minimum record, otherwise we should return the maximum record. As before, records without a value for 
+the key should be treated as having value 0.
+ 
+Once you have a working solution, you should re-implement min_by_key in terms of first_by_key .
+ 
+Java function signature:
+ 
+public static Map<String, Integer> firstByKey(String key, String direction, List<Map<String, Integer>> records);
+Examples (in Python):
+ 
+assert first_by_key("a", "asc", [{"a": 1}]) == {"a": 1}
+ 
+ 
+assert first_by_key("a", "asc", [{"b": 1}, {"b": -2}, {"a": 10}]) in [{"b": 1}, {"b": -2}]
+assert first_by_key("a", "desc", [{"b": 1}, {"b": -2}, {"a": 10}]) == {"a": 10}
+assert first_by_key("b", "asc", [{"b": 1}, {"b": -2}, {"a": 10}]) == {"b": -2}
+assert first_by_key("b", "desc", [{"b": 1}, {"b": -2}, {"a": 10}]) == {"b": 1}
+ 
+ 
+assert first_by_key("a", "desc", [{}, {"a": 10, "b": -10}, {}, {"a": 3, "c": 3}]) == {"a": 10, "b": -10}
+ 
+*/
+ 
+export enum Order {
+  Asc = "Asc",
+  Desc = "Desc",
+}
+
+export function firstByKey(key: string, order: Order, records: Map<string, number>[]): Map<string, number> {
+  let answer: Map<string, number> | undefined;
+
+  let minMaxValue: number;
+
+  const compareBy = (current: number, minMax: number) : boolean => {
+    return (order === Order.Desc) ? current > minMax : current < minMax;
+  }
+
+  records.forEach( ( record: Map<string, number>) => {
+    let currentValue = record.get(key);
+    currentValue = currentValue === undefined ? 0 : currentValue;
+    if (!answer) {
+      answer = record;
+      minMaxValue = currentValue;
+    } else {
+      if (compareBy(currentValue, minMaxValue)) {
+        answer = record;
+        minMaxValue = currentValue;
+      }
+    }    
+  })
+
+  if (!answer) {
+    answer = new Map<string, number>();
+  }
+  return answer;  
+}
