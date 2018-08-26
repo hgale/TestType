@@ -32,32 +32,30 @@ assert min_by_key("b", [{"a": -1}, {"b": -1}]) == {"b": -1}
 */
 
 
-function minByKey(key: string, records: Map<string, number>[]): Map<string, number> | undefined {
-  // TODO Check input to see if valid or not
+export function minByKey(key: string, records: Map<string, number>[]): Map<string, number> | undefined {
   let answer: Map<string, number> | undefined;
-  console.log('Key is ', key);
-  console.log('records is ', records);
   let min: number;
   records.forEach( ( record: Map<string, number>) => {
-    let currentValue = record.get(key);        
-    if (currentValue) {
-      if (!answer) {
-        console.log('No answer so set to', record);
+    let currentValue = record.get(key);
+    currentValue = currentValue === undefined ? 0 : currentValue;
+    if (!answer) {
+      answer = record;
+      min = currentValue;
+    } else {
+      if (currentValue < min ) {
         answer = record;
         min = currentValue;
-      } else {
-        if (currentValue < min ) {
-          console.log('currentValue is less than min so set ', record);          
-          answer = record;
-          min = currentValue;
-        }
       }
-    }
+    }    
   })
+  if (!answer) {
+    console.log('Set value!');
+    answer = new Map<string, number>();
+  }
   return answer;
 }
 
-let records: Map<string, number>[] = new Array( new Map( [['a', 2], ['b,', 2]] ), new Map([['a', 2]]) );
+// let records: Map<string, number>[] = new Array( new Map( [['a', 1], ['b,', 2]] ), new Map([['a', 2]]) );
 
-let answer = minByKey('a', records);
-console.log('Answer is ', answer);
+// let answer = minByKey('a', records);
+// console.log('Answer is ', answer);
